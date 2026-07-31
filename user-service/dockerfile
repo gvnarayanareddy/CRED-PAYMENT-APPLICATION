@@ -3,7 +3,7 @@ WORKDIR /build
 COPY pom.xml .
 RUN maven dependency:go-offline
 COPY src ./src 
-RUN maven clean package -DskipkTests
+RUN mvn clean package -DskipTests
 
 #evn run
 FROM eclipse-temurin:21-jre-alpine
