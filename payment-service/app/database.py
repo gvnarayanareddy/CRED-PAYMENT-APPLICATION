@@ -10,7 +10,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 # Uses psycopg v3 driver: postgresql+psycopg://...
 # ---------------------------------------------------------------------
 DB_USER = os.getenv("DB_USERNAME", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "gvnreddy")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "credpay")
