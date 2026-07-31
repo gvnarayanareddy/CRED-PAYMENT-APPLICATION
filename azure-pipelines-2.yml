@@ -1,0 +1,61 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  acrServiceConnection: 'ACRCONNECTION'
+  frontendRepository: 'credpay/frontend'
+  userRepository: 'credpay/user-service'
+  paymentRepository: 'credpay/payment-service'
+  tag: '$(Build.BuildId)'
+stages:
+- stage: DockerBuild
+  displayName: Docker Build & Push
+
+  jobs:
+  - job: BuildPushImages
+    displayName: Build Docker Images
+
+    steps:
+    - checkout: self
+
+    - task: Docker@2
+      displayName: Build & Push Frontend Image
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(ACRCONNECTION)
+        repository: $(frontendRepository)
+        Dockerfile: frontend-react/Dockerfile
+        buildContext: frontend-react
+        tags: |
+          $(tag)
+          latest
+
+    - task: Docker@2
+      displayName: Build & Push User Service Image
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(ACRCONNECTION)
+        repository: $(userRepository)
+        Dockerfile: user-service/Dockerfile
+        buildContext: user-service
+        tags: |
+          $(tag)
+          latest
+
+    - task: Docker@2
+      displayName: Build & Push Payment Service Image
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(ACRCONNECTION)
+        repository: $(paymentRepository)
+        Dockerfile: payment-service/Dockerfile
+        buildContext: payment-service
+        tags: |
+          $(tag)
+          latest
