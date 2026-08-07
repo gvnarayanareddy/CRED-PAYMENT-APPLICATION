@@ -1,0 +1,18 @@
+subscription_id          = "a58a447a-2e11-4d7d-adb3-f06238da8379"
+location                 = "CANADA CENTRAL"
+Vnet_address_space       = "10.0.0.0/16"
+aks_subnet_prefix        = "10.0.1.0/24"
+postgres_subnet_prefix   = "10.0.2.0/24"
+node_count               = 2
+node_mini_count          = 2
+node_max_count           = 2
+vm_size                  = "Standard_D2ps_v5"
+postgres_version         = "17"
+postgres_admin_username  = "adminuser"
+database_name            = "creadpay"
+log_retention_days       = 30
+key_vault_name           = "kv-gvnreddy-20260805"
+key_vault_resource_group = "credresourcegroup"
+
+
+

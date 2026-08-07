@@ -14,9 +14,7 @@ crash.log
 crash.*.log
 
 # Variable files with real values - keep only *.tfvars.example
-*.tfvars
-*.tfvars.json
-!*.tfvars.example
+
 
 # Saved plans
 *.tfplan

@@ -15,7 +15,7 @@ module "resource_group" {
 }
 
 module "networking" {
-  source = "./modules/Networking"
+  source = "./modules/networking"
 
   name_prefix         = local.name_prefix
   resource_group_name = module.resource_group.name
