@@ -5,8 +5,26 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+trigger:
+- main
+
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 variables:
   acrServiceConnection: 'ACRCONNECTION'
@@ -16,52 +34,126 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: DockerBuild
-  displayName: 'Docker Build & Push'
+
+- stage: Terraform
+  displayName: 'Terraform Infrastructure'
 
   jobs:
-  - job: BuildPushImages
-    displayName: 'Build Docker Images'
+  - job: TerraformJob
+    displayName: 'Terraform Init, Validate, Plan & Apply'
 
     steps:
     - checkout: self
 
-    - task: Docker@2
-      displayName: 'Build & Push Frontend Image'
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
       inputs:
-        containerRegistry: 'ACRCONNECTION'
-        repository: 'frontendRepository'
-        command: 'buildAndPush'
-        Dockerfile: 'frontend-react/dockerfile'
-        buildContext: 'frontend-react'
-        tags: |
-          $(tag)
-          latest
+        terraformVersion: '1.13.3'
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Init'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: 'Terraform'
+        inlineScript: |
+          terraform version
+
+          terraform init \
+            -backend-config="storage_account_name=stroagecred123" \
+            -backend-config="container_name=satefile" \
+            -backend-config="key=cred.terraform.tfstate" \
+            -backend-config="resource_group_name=CREDRG" \
+            -backend-config="subscription_id=a58a447a-2e11-4d7d-adb3-f06238da8379" \
+            -backend-config="use_azuread_auth=true"
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Validate'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: 'Terraform'
+        inlineScript: |
+          terraform validate
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Plan'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: 'Terraform'
+        inlineScript: |
+          terraform plan -out=tfplan
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Apply'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: 'Terraform'
+        inlineScript: |
+          terraform apply -auto-approve tfplan
+# pool:
+#   vmImage: ubuntu-latest
+
+# variables:
+#   acrServiceConnection: 'ACRCONNECTION'
+#   frontendRepository: 'credpay/frontend'
+#   userRepository: 'credpay/user-service'
+#   paymentRepository: 'credpay/payment-service'
+#   tag: '$(Build.BuildId)'
+
+# stages:
+# - stage: DockerBuild
+#   displayName: 'Docker Build & Push'
+
+#   jobs:
+#   - job: BuildPushImages
+#     displayName: 'Build Docker Images'
+
+#     steps:
+#     - checkout: self
+
+#     - task: Docker@2
+#       displayName: 'Build & Push Frontend Image'
+#       inputs:
+#         containerRegistry: 'ACRCONNECTION'
+#         repository: 'frontendRepository'
+#         command: 'buildAndPush'
+#         Dockerfile: 'frontend-react/dockerfile'
+#         buildContext: 'frontend-react'
+#         tags: |
+#           $(tag)
+#           latest
 
     
-    - task: Docker@2
-      displayName: 'Build & Push User Service Image'
+#     - task: Docker@2
+#       displayName: 'Build & Push User Service Image'
 
-      inputs:
-        containerRegistry: 'ACRCONNECTION'
-        repository: 'userRepository'
-        command: 'buildAndPush'
-        Dockerfile: 'user-service/dockerfile'
-        buildContext: 'user-service'
-        tags: |
-          $(tag)
-          latest
-    - task: Docker@2
-      displayName: 'Build & Push Payment Service Image'
-      inputs:
-        containerRegistry: 'ACRCONNECTION'
-        repository: 'paymentRepository'
-        command: 'buildAndPush'
-        Dockerfile: 'payment-service/dockerfile'
-        buildContext: 'payment-service'
-        tags: |
-          $(tag)
-          latest
+#       inputs:
+#         containerRegistry: 'ACRCONNECTION'
+#         repository: 'userRepository'
+#         command: 'buildAndPush'
+#         Dockerfile: 'user-service/dockerfile'
+#         buildContext: 'user-service'
+#         tags: |
+#           $(tag)
+#           latest
+#     - task: Docker@2
+#       displayName: 'Build & Push Payment Service Image'
+#       inputs:
+#         containerRegistry: 'ACRCONNECTION'
+#         repository: 'paymentRepository'
+#         command: 'buildAndPush'
+#         Dockerfile: 'payment-service/dockerfile'
+#         buildContext: 'payment-service'
+#         tags: |
+#           $(tag)
+#           latest
     
 
     
