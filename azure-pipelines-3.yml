@@ -37,13 +37,7 @@ stages:
         scriptLocation: 'inlineScript'
         workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
-          terraform init \
-            -backend-config="storage_account_name=stroagecred123" \
-            -backend-config="container_name=satefile" \
-            -backend-config="key=cred.terraform.tfstate" \
-            -backend-config="resource_group_name=CREDRG" \
-            -backend-config="use_azuread_auth=true"
-
+          terraform init
     - task: AzureCLI@2
       displayName: 'Terraform Validate'
       inputs:
