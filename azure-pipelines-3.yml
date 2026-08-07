@@ -7,15 +7,7 @@
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  acrServiceConnection: 'ACRCONNECTION'
-  frontendRepository: 'credpay/frontend'
-  userRepository: 'credpay/user-service'
-  paymentRepository: 'credpay/payment-service'
-  tag: '$(Build.BuildId)'
-
 stages:
-
 - stage: Terraform
   displayName: 'Terraform Infrastructure'
 
@@ -27,12 +19,12 @@ stages:
     - checkout: self
 
     - task: TerraformInstaller@1
-      displayName: 'Install Terraform'
+      displayName: Install Terraform
       inputs:
         terraformVersion: '1.13.3'
 
     - task: AzureCLI@2
-      displayName: 'Terraform Init'
+      displayName: Terraform Init
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -50,7 +42,7 @@ stages:
             -backend-config="use_azuread_auth=true"
 
     - task: AzureCLI@2
-      displayName: 'Terraform Validate'
+      displayName: Terraform Validate
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -63,14 +55,18 @@ stages:
       displayName: Terraform Plan
       inputs:
         azureSubscription: 'Manualcred'
-        scriptType: bash
-        scriptLocation: inlineScript
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
         workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
-         terraform plan -out=tfplan
+          pwd
+          ls -la
+          find . -name "*.tf"
+
+          terraform plan -out=tfplan
 
     - task: AzureCLI@2
-      displayName: 'Terraform Apply'
+      displayName: Terraform Apply
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -78,8 +74,6 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
           terraform apply -auto-approve tfplan
-
-
 
 # pool:
 #   vmImage: ubuntu-latest
