@@ -20,7 +20,7 @@ stages:
 
   jobs:
   - job: TerraformJob
-    displayName: 'Terraform Init '
+    displayName: 'Terraform Job'
 
     steps:
     - checkout: self
@@ -55,8 +55,9 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
           terraform validate
+
     - task: AzureCLI@2
-      displayName: 'Terraform plan'
+      displayName: 'Terraform Plan'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -64,8 +65,9 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
           terraform plan -var-file="terraform.tfvars"
+
     - task: AzureCLI@2
-      displayName: 'Terraform apply'
+      displayName: 'Terraform Apply'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
