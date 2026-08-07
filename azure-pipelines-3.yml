@@ -4,8 +4,15 @@
 # https://aka.ms/yaml
 
 
+trigger:
+- main
+
 pool:
   vmImage: 'ubuntu-latest'
+
+variables:
+  terraformVersion: '1.13.3'
+  azureServiceConnection: 'Manualcred'
 
 stages:
 - stage: Terraform
@@ -16,23 +23,46 @@ stages:
     displayName: 'Terraform Init, Validate, Plan & Apply'
 
     steps:
+
+    # Checkout Repository
     - checkout: self
 
+    # Debug Repository Structure
+    - script: |
+        echo "========== Current Directory =========="
+        pwd
+
+        echo "========== Repository Structure =========="
+        ls -R
+
+        echo "========== Build Sources Directory =========="
+        echo $(Build.SourcesDirectory)
+
+        echo "========== Terraform Folder =========="
+        ls -la $(Build.SourcesDirectory)/Terraform
+      displayName: 'Show Repository Structure'
+
+    # Install Terraform
     - task: TerraformInstaller@1
-      displayName: Install Terraform
+      displayName: 'Install Terraform'
       inputs:
         terraformVersion: '1.13.3'
 
+    # Verify Terraform Installation
+    - script: |
+        terraform version
+        which terraform
+      displayName: 'Verify Terraform'
+
+    # Terraform Init
     - task: AzureCLI@2
-      displayName: Terraform Init
+      displayName: 'Terraform Init'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
-          terraform version
-
           terraform init \
             -backend-config="storage_account_name=stroagecred123" \
             -backend-config="container_name=satefile" \
@@ -41,8 +71,9 @@ stages:
             -backend-config="subscription_id=a58a447a-2e11-4d7d-adb3-f06238da8379" \
             -backend-config="use_azuread_auth=true"
 
+    # Terraform Validate
     - task: AzureCLI@2
-      displayName: Terraform Validate
+      displayName: 'Terraform Validate'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -51,8 +82,9 @@ stages:
         inlineScript: |
           terraform validate
 
+    # Terraform Plan
     - task: AzureCLI@2
-      displayName: Terraform Plan
+      displayName: 'Terraform Plan'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
@@ -65,8 +97,9 @@ stages:
 
           terraform plan -out=tfplan
 
+    # Terraform Apply
     - task: AzureCLI@2
-      displayName: Terraform Apply
+      displayName: 'Terraform Apply'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
