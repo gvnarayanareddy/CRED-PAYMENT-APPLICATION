@@ -17,7 +17,6 @@ variables:
 stages:
 - stage: Terraform
   displayName: 'Terraform Stage'
-
   jobs:
   - job: TerraformJob
     displayName: 'Terraform Job'
@@ -43,7 +42,6 @@ stages:
             -backend-config="container_name=satefile" \
             -backend-config="key=cred.terraform.tfstate" \
             -backend-config="resource_group_name=CREDRG" \
-            -backend-config="subscription_id=a58a447a-2e11-4d7d-adb3-f06238da8379" \
             -backend-config="use_azuread_auth=true"
 
     - task: AzureCLI@2
