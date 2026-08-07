@@ -4,50 +4,31 @@
 # https://aka.ms/yaml
 
 
-trigger:
-- main
-
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  terraformVersion: '1.13.3'
-  azureServiceConnection: 'Manualcred'
+  acrServiceConnection: 'ACRCONNECTION'
+  frontendRepository: 'credpay/frontend'
+  userRepository: 'credpay/user-service'
+  paymentRepository: 'credpay/payment-service'
+  tag: '$(Build.BuildId)'
 
 stages:
 - stage: Terraform
-  displayName: 'Terraform Infrastructure'
+  displayName: 'Terraform Stage'
 
   jobs:
   - job: TerraformJob
-    displayName: 'Terraform Init, Validate, Plan & Apply'
+    displayName: 'Terraform Init '
 
     steps:
     - checkout: self
-
-    - script: |
-        echo "========== Current Directory =========="
-        pwd
-
-        echo "========== Repository Structure =========="
-        ls -R
-
-        echo "========== Build Sources Directory =========="
-        echo "$(Build.SourcesDirectory)"
-
-        echo "========== Terraform Folder =========="
-        ls -la "$(Build.SourcesDirectory)/Terraform"
-      displayName: 'Show Repository Structure'
 
     - task: TerraformInstaller@1
       displayName: 'Install Terraform'
       inputs:
         terraformVersion: '1.13.3'
-
-    - script: |
-        terraform version
-        which terraform
-      displayName: 'Verify Terraform'
 
     - task: AzureCLI@2
       displayName: 'Terraform Init'
@@ -55,7 +36,7 @@ stages:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
           terraform init \
             -backend-config="storage_account_name=stroagecred123" \
@@ -71,35 +52,28 @@ stages:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
           terraform validate
-
     - task: AzureCLI@2
-      displayName: 'Terraform Plan'
+      displayName: 'Terraform plan'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
-          pwd
-          ls -la
-          find . -name "*.tf"
-
-          terraform plan -out=tfplan
-
+          terraform plan -var-file="terraform.tfvars"
     - task: AzureCLI@2
-      displayName: 'Terraform Apply'
+      displayName: 'Terraform apply'
       inputs:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
-          terraform apply -auto-approve tfplan
-
-# pool:
+          terraform apply -auto-approve -var-file="terraform.tfvars"         
+#pool
 #   vmImage: ubuntu-latest
 
 # variables:
