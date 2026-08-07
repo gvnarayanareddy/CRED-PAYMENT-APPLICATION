@@ -4,25 +4,6 @@
 # https://aka.ms/yaml
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-trigger:
-- main
-
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -56,7 +37,7 @@ stages:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: 'Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
           terraform version
 
@@ -97,6 +78,9 @@ stages:
         workingDirectory: 'Terraform'
         inlineScript: |
           terraform apply -auto-approve tfplan
+
+
+
 # pool:
 #   vmImage: ubuntu-latest
 
