@@ -55,19 +55,19 @@ stages:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: 'Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
           terraform validate
 
     - task: AzureCLI@2
-      displayName: 'Terraform Plan'
+      displayName: Terraform Plan
       inputs:
         azureSubscription: 'Manualcred'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        workingDirectory: 'Terraform'
+        scriptType: bash
+        scriptLocation: inlineScript
+        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
-          terraform plan -out=tfplan
+         terraform plan -out=tfplan
 
     - task: AzureCLI@2
       displayName: 'Terraform Apply'
@@ -75,7 +75,7 @@ stages:
         azureSubscription: 'Manualcred'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: 'Terraform'
+        workingDirectory: '$(Build.SourcesDirectory)/Terraform'
         inlineScript: |
           terraform apply -auto-approve tfplan
 
