@@ -1,88 +1,83 @@
-# =====================================================================
-# CredPay - Input Variables
-# =====================================================================
-
-# Azure Subscription ID
 variable "subscription_id" {
-  type = string
+  description = "The subscription ID for the Azure account."
+  type        = string
+
 }
 
-# Azure Region (e.g. eastus)
 variable "location" {
-  type    = string
-  default = "canadacentral"
+  description = "The Azure region where resources will be created."
+  type        = string
+  default     = "CANADA CENTRAL"
+
+}
+variable "Vnet_address_space" {
+  description = "The address space for the virtual network."
+  type        = string
+  default     = "10.0.0.0/16"
 }
 
-# ----- Networking -----
-
-# Virtual Network address range
-variable "vnet_address_space" {
-  type    = string
-  default = "10.0.0.0/16"
-}
-
-# AKS subnet address range
 variable "aks_subnet_prefix" {
-  type    = string
-  default = "10.0.0.0/20"
+  description = "The address space for the subnet."
+  type        = string
+  default     = "10.0.1.0/24"
 }
 
-# PostgreSQL subnet address range
 variable "postgres_subnet_prefix" {
-  type    = string
-  default = "10.0.16.0/24"
+  description = "The address space for the subnet."
+  type        = string
+  default     = "10.0.2.0/24"
 }
-
-# ----- AKS -----
-
-# Number of nodes to start with
 variable "node_count" {
-  type    = number
-  default = 3
+  description = "The number of nodes in the AKS cluster."
+  type        = number
+  default     = 2
 }
 
-# Minimum nodes for autoscaling
-variable "node_min_count" {
-  type    = number
-  default = 2
+variable "node_mini_count" {
+  description = "The minimum number of nodes in the AKS cluster."
+  type        = number
+  default     = 2
 }
 
-# Maximum nodes for autoscaling
 variable "node_max_count" {
-  type    = number
-  default = 5
+  description = "The maximum number of nodes in the AKS cluster."
+  type        = number
+  default     = 2
+
 }
 
-# Size of each AKS node (VM)
 variable "vm_size" {
-  type    = string
-  default = "Standard_D2alds_v6"
+  description = "The size of the virtual machines in the AKS cluster."
+  type        = string
+  default     = "Standard_DS2aldss_v6"
+
 }
-
-# ----- PostgreSQL -----
-
-# PostgreSQL major version
 variable "postgres_version" {
-  type    = string
-  default = "18"
+  description = "The version of PostgreSQL to use."
+  type        = string
+  default     = "17"
 }
-
-# PostgreSQL admin username
 variable "postgres_admin_username" {
-  type    = string
-  default = "credpayadmin"
+  description = "The admin username for PostgreSQL."
+  type        = string
+  default     = "creadpayadmin"
 }
-
-# Database name
 variable "database_name" {
-  type    = string
-  default = "credpay"
+  description = "The name of the PostgreSQL database."
+  type        = string
+  default     = "creadpay"
 }
-
-# ----- Monitoring -----
-
-# Log Analytics retention in days
 variable "log_retention_days" {
-  type    = number
-  default = 30
+  description = "The number of days to retain logs."
+  type        = number
+  default     = 7
 }
+variable "key_vault_name" {
+  description = "The name of the Azure Key Vault."
+  type        = string
+}
+variable "key_vault_resource_group" {
+  description = "The resource group for the Azure Key Vault."
+  type        = string
+}
+    
