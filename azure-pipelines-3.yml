@@ -68,7 +68,7 @@ stages:
         scriptLocation: 'inlineScript'
         workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
-          #terraform plan -var-file="terraform.tfvars"
+          terraform plan -var-file="terraform.tfvars"
 
     - task: AzureCLI@2
       displayName: 'Terraform Apply'
@@ -79,8 +79,15 @@ stages:
         workingDirectory: '$(Build.SourcesDirectory)/terraform'
         inlineScript: |
           terraform apply -auto-approve -var-file="terraform.tfvars"
+    - task: AzureCLI@2
+      displayName: 'Terraform destroy'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
           terraform destroy -auto-approve -var-file="terraform.tfvars"      
-      
 #pool
 #   vmImage: ubuntu-latest
 
