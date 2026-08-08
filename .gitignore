@@ -1,6 +1,7 @@
 # =====================================================================
 # Terraform
 # =====================================================================
+
 # Local provider plugins / modules cache
 .terraform/
 .terraform.lock.hcl
@@ -14,7 +15,8 @@ crash.log
 crash.*.log
 
 # Variable files with real values - keep only *.tfvars.example
-
+*.tfvars
+!*.tfvars.example
 
 # Saved plans
 *.tfplan
