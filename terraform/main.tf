@@ -45,7 +45,6 @@ module "postgres" {
   name_prefix         = local.name_prefix
   resource_group_name = module.resource_group.name
   location            = var.location
-
   admin_username   = var.postgres_admin_username
   database_name    = var.database_name
   postgres_version = var.postgres_version
@@ -71,6 +70,7 @@ module "aks" {
   vm_size = var.vm_size
   tags    = local.tags
 }
+data "azurerm_client_config" "current" {}
 
 module "keyvault" {
   source = "./modules/keyvault"
@@ -78,6 +78,8 @@ module "keyvault" {
   key_vault_name                = "kv-gvn-${local.name_prefix}"
   location                      = var.location
   key_vault_resource_group_name = module.resource_group.name
+
+  keyvault_access_object_id = data.azurerm_client_config.current.object_id
 
   postgres_fqdn           = module.postgres.fqdn
   postgres_admin_username = module.postgres.admin_username

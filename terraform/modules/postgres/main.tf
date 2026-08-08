@@ -8,7 +8,7 @@ resource "random_password" "admin" {
   min_special      = 2
 }
 resource "azurerm_postgresql_flexible_server" "psql" {
-name = "psql-${var.name_prefix}-01"
+  name                          = "psql-${var.name_prefix}-01"
   location                      = var.location
   resource_group_name           = var.resource_group_name
   administrator_login           = var.admin_username
@@ -20,14 +20,14 @@ name = "psql-${var.name_prefix}-01"
   backup_retention_days         = 7
   zone                          = "1" # Use the existing server's zone
 
-  tags                          = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_postgresql_flexible_server_database" "pdb" {
   name      = var.database_name
   server_id = azurerm_postgresql_flexible_server.psql.id
   charset   = "UTF8"
- collation = "en_US.utf8"
+  collation = "en_US.utf8"
 
 }
 
