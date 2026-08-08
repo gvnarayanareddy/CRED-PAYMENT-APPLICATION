@@ -15,6 +15,7 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
+
 - stage: Terraform
   displayName: 'Terraform Stage'
   jobs:
@@ -32,41 +33,52 @@ stages:
     - task: AzureCLI@2
       displayName: 'Terraform Init'
       inputs:
-       azureSubscription: 'Manualcred'
-       scriptType: 'bash'
-       scriptLocation: 'inlineScript'
-       workingDirectory: '$(Build.SourcesDirectory)/terraform'
-       inlineScript: |
-         terraform init    
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
+          terraform init
+
     - task: AzureCLI@2
       displayName: 'Terraform Validate'
       inputs:
-       azureSubscription: 'Manualcred'
-       scriptType: 'bash'
-       scriptLocation: 'inlineScript'
-       workingDirectory: '$(Build.SourcesDirectory)/terraform'
-       inlineScript: |
-        terraform validate
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
+          terraform validate
+
+    - task: AzureCLI@2
+      displayName: 'Create Terraform Variables File'
+      inputs:
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
+          cp terraform.tfvars.example terraform.tfvars
 
     - task: AzureCLI@2
       displayName: 'Terraform Plan'
       inputs:
-       azureSubscription: 'Manualcred'
-       scriptType: 'bash'
-       scriptLocation: 'inlineScript'
-       workingDirectory: '$(Build.SourcesDirectory)/terraform'
-       inlineScript: |
-        terraform plan -var-file="terraform.tfvars"
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
+          terraform plan -var-file="terraform.tfvars"
 
     - task: AzureCLI@2
       displayName: 'Terraform Apply'
       inputs:
-       azureSubscription: 'Manualcred'
-       scriptType: 'bash'
-       scriptLocation: 'inlineScript'
-       workingDirectory: '$(Build.SourcesDirectory)/terraform'
-       inlineScript: |
-        terraform apply -auto-approve -var-file="terraform.tfvars"        
+        azureSubscription: 'Manualcred'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: '$(Build.SourcesDirectory)/terraform'
+        inlineScript: |
+          terraform apply -auto-approve -var-file="terraform.tfvars"      
 #pool
 #   vmImage: ubuntu-latest
 
